@@ -1,13 +1,25 @@
 %% 摘要
 
-% 中文摘要
 \begin{abstract}
-    这是一个适用于西北工业大学学位论文写作的文档类模板 \textbf{nwputhesis}，模板来源：\url{https://github.com/1195343015/nwputhesis}。
-    \keywordslist{学位论文, 模板}
+    发射逃逸系统在载人航天中直接关系航天员生命安全。针对未来载人登月任务的需求，本文选取猎户座飞船作为参考对象，围绕发射逃逸阶段展开六自由度动力学建模、蒙特卡洛仿真分析与风险评估研究。
+
+    构建的六自由度仿真模型包含坐标系转换、ISA标准大气模型、按马赫数分段的气动力模型、AM/ACM/JM多发动机联合推进系统以及程序角PD姿态控制律，推导了完整的平动与转动微分方程。为模拟真实飞行条件，模型还纳入了风扰、发动机安装偏差、推力与质量偏差、初始状态偏差、气动与大气模型偏差等六类干扰因素，共计八个独立实验变量。
+
+    对零高度逃逸和最大动压逃逸两种工况，分别采用$L_{27}(3^8)$正交试验和500组拉丁超立方抽样进行打靶分析。结果显示，零高度逃逸在50m命中半径下命中率为96.20\%；最大动压逃逸在1000m命中半径下命中率为95.20\%。正交试验的敏感性分析揭示出两种工况的差异：零高度逃逸主要受风扰影响，而最大动压工况对气动与大气模型偏差更为敏感。
+
+    基于蒙特卡洛统计结果，建立了分级风险评估体系。评估表明，两种工况的命中风险与姿态风险均处于低水平，超限概率低于4\%，角速度波动不超过0.003rad/s。值得注意的是，最大动压逃逸存在一定尾部风险，最极端情况下脱靶量可达1414.684m。
+
+    \keywordslist{载人登月；发射逃逸系统；六自由度动力学；蒙特卡洛仿真；风险评估}
 \end{abstract}
 
-% 英文摘要
 \begin{engabstract}
-    This is a document class template named \textbf{nwputhesis} for thesis writing at Northwestern Polytechnical University. Template source: \url{https://github.com/1195343015/nwputhesis}.
-    \engkeywordslist{thesis, template}
+    The launch escape system is directly related to the safety of astronauts in manned space flight. Aiming at the needs of future manned lunar missions, this paper selects the Orion spacecraft as a reference object, and conducts six-degree-of-freedom dynamic modeling, Monte Carlo simulation analysis and risk assessment research around the launch escape phase. 
+ 
+    The six-degree-of-freedom simulation model includes coordinate system transformation, ISA standard atmosphere model, aerodynamic model segmented by Mach number, AM / ACM / JM multi-engine joint propulsion system and programmed angle PD attitude control law. The complete translational and rotational differential equations are derived. In order to simulate the real flight conditions, the model also includes six kinds of interference factors, such as wind disturbance, engine installation deviation, thrust and mass deviation, initial state deviation, aerodynamic and atmospheric model deviation, a total of eight independent experimental variables. 
+ 
+    For zero height escape and maximum dynamic pressure escape, $L_{27}(3^8)$ orthogonal test and 500 groups of Latin hypercube sampling were used for shooting analysis. The results show that the hit rate of zero height escape at 50 m hit radius is 96.20\%. The hit rate of the maximum dynamic pressure escape under the 1000 m hit radius is 95.20\%. The sensitivity analysis of the orthogonal test reveals the difference between the two conditions : the zero-altitude escape is mainly affected by wind disturbance, while the maximum dynamic pressure condition is more sensitive to the deviation of aerodynamic and atmospheric models. 
+ 
+    Based on the Monte Carlo statistical results, a hierarchical risk assessment system was established. The evaluation shows that the hit risk and attitude risk of the two working conditions are at a low level, the over-limit probability is less than 4\%, and the angular velocity fluctuation does not exceed 0.003 rad / s. It is worth noting that there is a certain tail risk in the maximum dynamic pressure escape, and the miss distance can reach 1414.684 m in the most extreme cases.
+
+    \engkeywordslist{Crewed lunar landing; Launch abort system; 6-DOF dynamics; Monte Carlo simulation; Risk assessment}
 \end{engabstract}

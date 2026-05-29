@@ -1,39 +1,709 @@
-%% 第三章
+%% 第三章 关键阶段六自由度动力学仿真模型
 
-\chapter{算法示例}
-\chaptermark{算法示例}
+\chapter{关键阶段六自由度动力学仿真模型}
+\chaptermark{关键阶段六自由度动力学仿真模型}
 
-\section{基于二分查找的有序数组检索}
+\section{坐标系定义与运动学描述}
 
-本章给出一个算法环境的使用示例。假设输入为一个按升序排列的数组
-$A = \{a_1, a_2, \ldots, a_n\}$，目标是在数组中查找给定元素 $x$ 的位置。
-如\autoref{alg:undergraduate-binary-search}所示，二分查找每一步都将搜索区间缩小为原来的一半，
-因此具有较高的检索效率。
+\subsection{坐标系定义}
 
-\begin{algorithm}[htbp]
-    \caption{二分查找算法示例}
-    \label{alg:undergraduate-binary-search}
-    \begin{algorithmic}[1]
-        \Require 升序数组 $A$，数组长度 $n$，待查找元素 $x$
-        \Ensure 若查找成功则返回元素下标，否则返回 $-1$
-        \State $left \gets 1$
-        \State $right \gets n$
-        \While{$left \leq right$}
-            \State $mid \gets \lfloor (left + right) / 2 \rfloor$
-            \If{$A[mid] = x$}
-                \State \Return $mid$
-            \ElsIf{$A[mid] < x$}
-                \State $left \gets mid + 1$
-            \Else
-                \State $right \gets mid - 1$
-            \EndIf
-        \EndWhile
-        \State \Return $-1$
-    \end{algorithmic}
-\end{algorithm}
+为准确描述逃逸飞行器在三维空间中的运动状态，建立如下四个参考坐标系~\cite{刘思奇2021,张希彬2019,张远2022,龚梦琳2025}：
 
-\section{复杂度分析}
+（1）地面坐标系 $Axyz$：原点 $A$ 位于发射点（或逃逸触发时刻飞行器质心在地面的投影），$Ay$ 轴竖直向上，$Ax$ 轴为发射方向在地面上的投影，$Az$ 轴由右手定则确定。在该坐标系上进行平动运动的积分。
 
-对于长度为 $n$ 的有序数组，\autoref{alg:undergraduate-binary-search} 在最坏情况下需要进行
-$O(\log n)$ 次比较，空间复杂度为 $O(1)$。该示例可用于展示模板中算法标题、
-编号、交叉引用以及伪代码排版效果。
+（2）机体坐标系 $Ox_1y_1z_1$：原点 $O$ 位于飞行器质心，$Ox_1$ 轴沿飞行器纵轴指向逃逸塔塔尖为正，$Oy_1$ 轴位于飞行器纵向对称面内垂直于 $Ox_1$ 轴指向上方，$Oz_1$ 轴由右手定则确定。用于计算推力、气动力和力矩在飞行器本体上的分量。
+
+（3）弹道坐标系 $Ox_2y_2z_2$：原点 $O$ 位于飞行器质心，$Ox_2$ 轴与速度矢量 $\mathbf v$ 方向一致，$Oy_2$ 轴位于包含速度矢量的铅垂面内，垂直于 $Ox_2$ 轴指向上为正，$Oz_2$ 轴由右手定则确定。
+
+（4）速度坐标系 $Ox_3y_3z_3$：原点 $O$ 位于飞行器质心，$Ox_3$ 轴与速度矢量 $\mathbf v$ 方向一致，$Oy_3$ 轴位于飞行器纵向对称面内，垂直于 $Ox_3$ 轴指向上为正，$Oz_3$ 轴由右手定则确定。用于计算气动力的升力和阻力分量。
+
+\subsection{基础旋转矩阵}
+
+定义绕坐标轴的基础旋转矩阵如下：
+
+\begin{equation}
+L_x(\varphi)=
+\begin{compactmatrix}
+1 & 0 & 0 \\
+0 & \cos\varphi & \sin\varphi \\
+0 & -\sin\varphi & \cos\varphi
+\end{compactmatrix}
+\end{equation}
+
+\begin{equation}
+L_y(\varphi)=
+\begin{compactmatrix}
+\cos\varphi & 0 & -\sin\varphi \\
+0 & 1 & 0 \\
+\sin\varphi & 0 & \cos\varphi
+\end{compactmatrix}
+\end{equation}
+
+\begin{equation}
+L_z(\varphi)=
+\begin{compactmatrix}
+\cos\varphi & \sin\varphi & 0 \\
+-\sin\varphi & \cos\varphi & 0 \\
+0 & 0 & 1
+\end{compactmatrix}
+\end{equation}
+
+\subsection{坐标变换矩阵}
+
+采用 $z\to y\to x$ 的欧拉角序列（偏航角 $\psi$、俯仰角 $\vartheta$、滚转角 $\gamma$），地面系到机体系的变换矩阵为：
+
+\begin{equation}
+L_{1\leftarrow A}(\psi,\vartheta,\gamma)=L_z(\vartheta)L_y(\psi)L_x(\gamma) 
+\end{equation}
+
+展开后得到：
+
+\begin{equation}
+L_{1\leftarrow A} = 
+\begin{compactmatrix}
+\cos\vartheta\cos\psi & \cos\vartheta\sin\psi & -\sin\vartheta \\
+\sin\psi\sin\vartheta\sin\gamma-\cos\psi\cos\gamma & \cos\psi\sin\vartheta\sin\gamma+\sin\psi\cos\gamma & \cos\vartheta\sin\gamma \\
+\sin\psi\sin\vartheta\cos\gamma+\cos\psi\sin\gamma & \cos\psi\sin\vartheta\cos\gamma-\sin\psi\sin\gamma & \cos\vartheta\cos\gamma
+\end{compactmatrix}
+\end{equation}
+
+地面系到弹道系的变换矩阵为：
+
+\begin{equation}
+L_{2\leftarrow A}(\psi_v,\theta)=L_z(\theta)L_y(\psi_v) 
+\end{equation}
+
+其中 $\theta$ 为弹道倾角，$\psi_v$ 为弹道偏角：
+
+\begin{equation}
+L_{2\leftarrow A}=
+\begin{compactmatrix}
+\cos\theta\cos\psi_v & \sin\theta & -\cos\theta\sin\psi_v \\
+-\sin\theta\cos\psi_v & \cos\theta & \sin\theta\sin\psi_v \\
+\sin\psi_v & 0 & \cos\psi_v
+\end{compactmatrix}
+\end{equation}
+
+速度系到机体系的变换矩阵为：
+
+\begin{equation}
+L_{1\leftarrow 3}(\beta,\alpha)=L_z(\alpha)L_y(\beta) 
+\end{equation}
+
+其中 $\alpha$ 为攻角，$\beta$ 为侧滑角：
+
+\begin{equation}
+L_{1\leftarrow 3}=
+\begin{compactmatrix}
+\cos\alpha\cos\beta & \sin\alpha & -\cos\alpha\sin\beta \\
+-\sin\alpha\cos\beta & \cos\alpha & \sin\alpha\sin\beta \\
+\sin\beta & 0 & \cos\beta
+\end{compactmatrix}
+\end{equation}
+
+弹道系到速度系的变换矩阵为：
+
+\begin{equation}
+L_{3\leftarrow 2}(\gamma_v)=L_x(\gamma_v)=
+\begin{compactmatrix}
+1 & 0 & 0 \\
+0 & \cos\gamma_v & \sin\gamma_v \\
+0 & -\sin\gamma_v & \cos\gamma_v
+\end{compactmatrix}
+\end{equation}
+
+各正交变换矩阵的逆变换由转置给出：
+
+\begin{equation}
+L_{A\leftarrow 1}=L_{1\leftarrow A}^T,\quad
+L_{A\leftarrow 2}=L_{2\leftarrow A}^T,\quad
+L_{3\leftarrow 1}=L_{1\leftarrow 3}^T
+\end{equation}
+
+组合关系如下：
+
+\begin{equation}
+L_{1\leftarrow 2}=L_{1\leftarrow 3}L_{3\leftarrow 2},\quad
+L_{2\leftarrow 1}=L_{1\leftarrow 2}^T
+\end{equation}
+
+向量变换的通式为 $\mathbf v_a=L_{a\leftarrow b}\mathbf v_b$，即向量在 $a$ 系中的分量等于变换矩阵乘以该向量在 $b$ 系中的分量。
+
+\subsection{状态向量与惯量参数}
+
+逃逸飞行器的运动状态由如下13维状态向量描述：
+
+\begin{equation}
+\mathbf X=[\mathbf r_A,\mathbf v_A,\boldsymbol\Theta,\boldsymbol\omega_1,m]^T 
+\end{equation}
+
+其中 $\mathbf r_A=[x,y,z]^T$ 为地面系位置，$\mathbf v_A=[v_x,v_y,v_z]^T$ 为地面系速度，$\boldsymbol\Theta=[\psi,\vartheta,\gamma]^T$ 为欧拉角（偏航、俯仰、滚转），$\boldsymbol\omega_1=[\omega_{x1},\omega_{y1},\omega_{z1}]^T$ 为机体系角速度，$m$ 为飞行器的瞬时质量。
+
+用主惯量轴建模，惯量矩阵取对角形式：
+
+\begin{equation}
+\mathbf I=\mathrm{diag}(I_x,I_y,I_z) 
+\end{equation}
+
+默认取值 $I_x=3.0\times10^4\ \mathrm{kg\cdot m^2}$，$I_y=3.2\times10^5\ \mathrm{kg\cdot m^2}$，$I_z=3.2\times10^5\ \mathrm{kg\cdot m^2}$。上述惯量值依据猎户座飞船的公开质量与几何尺寸进行工程反算得到。
+
+\section{地球环境与气动模型}
+
+\subsection{重力模型}
+
+重力加速度随高度变化的模型采用平方反比公式：
+
+\begin{equation}
+g(h)=g_0\left(\frac{R_e}{R_e+h}\right)^2 
+\end{equation}
+
+其中 $g_0=9.80665\ \mathrm{m/s^2}$ 为海平面重力加速度，$R_e=6378137\ \mathrm m$ 为地球半径。重力向量在地面系中表达为：
+
+\begin{equation}
+\mathbf G_A=[0,-mg(h),0]^T 
+\end{equation}
+
+\subsection{大气模型}
+
+大气环境采用国际标准大气（ISA）0--47 km分层模型~\cite{ISO2533,GB192}。基本常数取值如下：
+
+\begin{equation}
+T_0=288.15\ \mathrm K,\quad p_0=101325\ \mathrm{Pa},\quad R=287.05\ \mathrm{J/(kg\cdot K)}
+\end{equation}
+
+温度随高度的分段函数为：
+
+\begin{equation}
+T(h)=
+\begin{cases}
+T_0-0.0065h, & 0\le h<11000 \\[4pt]
+216.65, & 11000\le h<20000 \\[4pt]
+216.65+0.001(h-20000), & 20000\le h<32000 \\[4pt]
+228.65+0.0028(h-32000), & 32000\le h\le47000
+\end{cases}
+\end{equation}
+
+压强随高度的分段函数为：
+
+\begin{equation}
+p(h)=
+\begin{cases}
+p_0\left(\dfrac{T(h)}{T_0}\right)^{\dfrac{g_0}{0.0065R}}, & 0\le h<11000 \\[10pt]
+p_{11}\exp\!\left[-\dfrac{g_0(h-11000)}{RT_{11}}\right], & 11000\le h<20000 \\[10pt]
+p_{20}\left(\dfrac{T(h)}{T_{20}}\right)^{-\dfrac{g_0}{0.001R}}, & 20000\le h<32000 \\[10pt]
+p_{32}\left(\dfrac{T(h)}{T_{32}}\right)^{-\dfrac{g_0}{0.0028R}}, & 32000\le h\le47000
+\end{cases}
+\end{equation}
+
+其中 $p_{11}=22632.06\ \mathrm{Pa}$，$p_{20}=5474.89\ \mathrm{Pa}$，$p_{32}=868.02\ \mathrm{Pa}$。密度、声速与马赫数的计算关系为：
+
+\begin{equation}
+\rho(h)=\frac{p(h)}{RT(h)},\quad
+a(h)=\sqrt{\gamma RT(h)},\ \gamma=1.4,\quad
+M=\frac{V}{a}
+\end{equation}
+
+\subsection{气动角与气动力}
+
+首先将地面系速度变换到机体系：
+
+\begin{equation}
+\mathbf v_1=L_{1\leftarrow A}\mathbf v_A=[v_{x1},v_{y1},v_{z1}]^T,\quad V=\|\mathbf v_1\|_2 
+\end{equation}
+
+攻角与侧滑角定义为：
+
+\begin{equation}
+\alpha=\arctan2(-v_{y1},v_{x1}),\quad
+\beta=\arcsin\!\left(\frac{v_{z1}}{V}\right) 
+\end{equation}
+
+为防止线性气动模型在攻角过大时发散，引入工程限幅保护：
+
+\begin{equation}
+\alpha_{eff}=\mathrm{clip}(\alpha,-20^\circ,20^\circ),\quad
+\beta_{eff}=\mathrm{clip}(\beta,-20^\circ,20^\circ) 
+\end{equation}
+
+动压表达式为：
+
+\begin{equation}
+q=\frac{1}{2}\rho V^2 
+\end{equation}
+
+阻力系数 $C_X$ 按马赫数分段拟合：
+
+\begin{equation}
+C_X(M)=
+\begin{cases}
+0.72, & M<0.8 \\
+0.90, & 0.8\le M<1.2 \\
+0.82, & M\ge 1.2
+\end{cases}
+\end{equation}
+
+法向力系数导数和侧向力系数导数取：
+
+\begin{equation}
+C_y^{\alpha}(M)=
+\begin{cases}
+2.0, & M<0.8 \\
+1.8, & 0.8\le M<1.2 \\
+1.6, & M\ge1.2
+\end{cases}\ \mathrm{rad^{-1}},\quad
+C_z^{\beta}(M)=-C_y^{\alpha}(M)
+\end{equation}
+
+则法向力系数和侧向力系数分别为：
+
+\begin{equation}
+C_Y=C_y^{\alpha}(M)\alpha_{eff},\quad
+C_Z=C_z^{\beta}(M)\beta_{eff} 
+\end{equation}
+
+气动力在速度系中表达为：
+
+\begin{equation}
+\mathbf R_3=qS[-C_X,\ C_Y,\ C_Z]^T 
+\end{equation}
+
+其中 $S$ 为飞行器参考面积。将气动力转换到机体系和地面系：
+
+\begin{equation}
+\mathbf R_1=L_{1\leftarrow 3}\mathbf R_3,\quad
+\mathbf R_A=L_{1\leftarrow A}^T\mathbf R_1 
+\end{equation}
+
+\subsection{气动力矩}
+
+气动力矩在机体系中表示为：
+
+\begin{equation}
+\mathbf M_R=qSL[m_x,m_y,m_z]^T 
+\end{equation}
+
+其中 $L$ 为参考长度。无量纲力矩系数取线性阻尼模型：
+
+\begin{equation}
+\begin{aligned}
+m_z &= m_{z0}+m_{z\alpha}\alpha_{eff}+m_{z\omega}\frac{\omega_{z1}L}{2V} \\[4pt]
+m_y &= m_{y\beta}\beta_{eff}+m_{y\omega}\frac{\omega_{y1}L}{2V}
+\end{aligned}
+\end{equation}
+
+滚转力矩系数暂取零。力矩系数工程初值取 $m_{z0}=0$，$m_{z\alpha}=-0.08$，$m_{z\omega}=-1.20$，$m_{y\beta}=-0.08$，$m_{y\omega}=-1.20$。
+
+\section{推进与控制模型}
+
+\subsection{逃逸发动机参数}
+
+逃逸系统由逃逸主发动机（AM）、姿控发动机（ACM）和抛塔发动机（JM）三种发动机组成。各发动机的关键参数如表~\ref{tab:engine}~所示。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{猎户座飞船发射逃逸系统(LAS)构成与发动机布局.png}
+\caption{猎户座飞船发射逃逸系统(LAS)构成与发动机布局}
+\label{fig:las-structure}
+\end{figure}
+
+\begin{table}[htbp]
+\caption{逃逸发动机参数}
+\label{tab:engine}
+\begin{tabular}{lc}
+\toprule
+参数 & 数值 \\
+\midrule
+AM 峰值推力 $P_{AM,max}$ & $1.957\times10^6\ \mathrm N$ \\
+ACM 峰值推力 $P_{ACM,max}$ & $3.114\times10^4\ \mathrm N$ \\
+JM 峰值推力 $P_{JM,max}$ & $1.957\times10^5\ \mathrm N$ \\
+乘员舱干重 $m_{cm}$ & $9979.0\ \mathrm{kg}$ \\
+AM 推进剂质量 $m_{0,AM}$ & $3447.3\ \mathrm{kg}$ \\
+ACM 推进剂质量 $m_{0,ACM}$ & $771.1\ \mathrm{kg}$ \\
+JM 推进剂质量 $m_{0,JM}$ & $408.2\ \mathrm{kg}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+三种发动机的比冲分别为 $I_{sp,AM}=250\ \mathrm s$，$I_{sp,ACM}=230\ \mathrm s$，$I_{sp,JM}=220\ \mathrm s$。
+
+\subsection{推力时序}
+
+定义任务时间基准 $t_{MET}$（相对逃逸触发时刻），各发动机的推力包线采用分段线性函数建模：
+
+\begin{equation}
+\tilde P_k(t)=
+\begin{cases}
+P_{k,max}\dfrac{t_{MET}-t_{k,0}}{t_{k,r}}, & t_{k,0}\le t_{MET}<t_{k,0}+t_{k,r} \\[10pt]
+P_{k,max}, & t_{k,0}+t_{k,r}\le t_{MET}<t_{k,0}+t_{k,b}-t_{k,s} \\[10pt]
+P_{k,max}\dfrac{t_{k,0}+t_{k,b}-t_{MET}}{t_{k,s}}, & t_{k,0}+t_{k,b}-t_{k,s}\le t_{MET}<t_{k,0}+t_{k,b} \\[10pt]
+0, & \text{其他}
+\end{cases}
+\end{equation}
+
+其中 $k\in\{AM,ACM,JM\}$，$t_{k,0}$ 为点火时刻，$t_{k,r}$ 为推力上升时间，$t_{k,b}$ 为总燃烧时间，$t_{k,s}$ 为推力衰减时间。不同逃逸工况的时序参数如表~\ref{tab:timing}~所示。
+
+\begin{table}[htbp]
+\caption{推力时序参数（逃逸相对时间）}
+\label{tab:timing}
+\begin{tabular}{lccccc}
+\toprule
+场景 & 发动机 & $t_{k,0}$ (s) & $t_{k,r}$ (s) & $t_{k,b}$ (s) & $t_{k,s}$ (s) \\
+\midrule
+Pad Abort & AM & 0.0 & 0.15 & 3.40 & 0.80 \\
+Pad Abort & ACM & 0.0 & 0.13 & 13.30 & 0.30 \\
+Pad Abort & JM & 13.0 & 0.10 & 2.00 & 0.10 \\
+Max-Q Abort & AM & 0.0 & 0.20 & 5.00 & 0.30 \\
+Max-Q Abort & ACM & 0.0 & 0.10 & 27.30 & 0.10 \\
+Max-Q Abort & JM & 27.0 & 0.10 & 1.70 & 0.10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+引入发动机状态开关 $\sigma_k(t)\in\{0,1\}$ 后，实际推力标量为：
+
+\begin{equation}
+P_k(t)=\sigma_k(t)\tilde P_k(t) 
+\end{equation}
+
+各发动机推力在机体系中的向量表达式为：
+
+\begin{equation}
+\mathbf P_{AM,1}=[P_{AM},0,0]^T,\quad
+\mathbf P_{JM,1}=[P_{JM},0,0]^T,\quad
+\mathbf P_{ACM,1}=[0,P_{Cy},P_{Cz}]^T 
+\end{equation}
+
+总推力向量为三者之和：
+
+\begin{equation}
+\mathbf P_1=\mathbf P_{AM,1}+\mathbf P_{ACM,1}+\mathbf P_{JM,1} 
+\end{equation}
+
+\subsection{质量流率}
+
+质量流率与实际推力保持一致。令 $P_{ACM}=\sqrt{P_{Cy}^2+P_{Cz}^2}$，则：
+
+\begin{equation}
+\dot m=-\frac{P_{AM}}{I_{sp,AM}g_0}-\frac{P_{ACM}}{I_{sp,ACM}g_0}-\frac{P_{JM}}{I_{sp,JM}g_0} 
+\end{equation}
+
+当对应发动机开关 $\sigma_k=0$ 时，该路推力和耗质同时为零。积分过程中设置质量下界以防止数值误差导致 $m\le0$。
+
+\subsection{姿态控制模型}
+
+姿态通道采用程序角比例-微分（PD）控制律。三轴控制力矩指令为：
+
+\begin{equation}
+\begin{aligned}
+M_{Cz}^{cmd} &= K_{\vartheta}(\vartheta_{pr}-\vartheta) - K_{d\vartheta}\,\omega_{z1} \\[4pt]
+M_{Cy}^{cmd} &= K_{\psi}(\psi_{pr}-\psi) - K_{d\psi}\,\omega_{y1} \\[4pt]
+M_{Cx}^{cmd} &= K_{\gamma}(\gamma_{pr}-\gamma) - K_{d\gamma}\,\omega_{x1}
+\end{aligned}
+\end{equation}
+
+其中 $\vartheta_{pr}$、$\psi_{pr}$、$\gamma_{pr}$ 为程序姿态角，$\omega_{x1},\omega_{y1},\omega_{z1}$ 为机体角速度。比例增益取 $K_{\vartheta}=8.0\times10^5\ \mathrm{N\cdot m/rad}$，$K_{\psi}=8.0\times10^5\ \mathrm{N\cdot m/rad}$，$K_{\gamma}=3.0\times10^5\ \mathrm{N\cdot m/rad}$；微分增益取 $K_{d\vartheta}=7.0\times10^5$，$K_{d\psi}=7.0\times10^5$，$K_{d\gamma}=1.3\times10^5$（单位 $\mathrm{N\cdot m\cdot s/rad}$）。
+
+通过ACM喷气实现俯仰和偏航通道的力矩控制。ACM推力分配关系为：
+
+\begin{equation}
+P_{Cy}^{cmd}=-\frac{M_{Cz}^{cmd}}{l_{ACM}},\quad
+P_{Cz}^{cmd}=\frac{M_{Cy}^{cmd}}{l_{ACM}} 
+\end{equation}
+
+其中 $l_{ACM}=6.0\ \mathrm m$ 为ACM喷管力臂。实际控制力矩为：
+
+\begin{equation}
+M_{Cy}=-l_{ACM}P_{Cz},\quad
+M_{Cz}=l_{ACM}P_{Cy} 
+\end{equation}
+
+滚转通道直接由姿控发动机产生控制力矩，即 $M_{Cx}=M_{Cx}^{cmd}$。
+
+\section{六自由度动力学方程}
+
+\subsection{平动动力学}
+
+逃逸飞行器在地面系中的平动动力学方程为：
+
+\begin{equation}
+m\dot{\mathbf v}_A=\mathbf P_A+\mathbf R_A+\mathbf G_A 
+\end{equation}
+
+其中推力 $\mathbf P_A$ 和气动力 $\mathbf R_A$ 分别通过坐标变换由机体系转换得到：
+
+\begin{equation}
+\mathbf P_A=L_{1\leftarrow A}^T\mathbf P_1,\quad
+\mathbf R_A=L_{1\leftarrow A}^T\mathbf R_1 
+\end{equation}
+
+令 $\mathbf F_A=[F_x,F_y,F_z]^T=\mathbf P_A+\mathbf R_A+\mathbf G_A$，则分量形式为：
+
+\begin{equation}
+\dot v_x=\frac{F_x}{m},\quad
+\dot v_y=\frac{F_y}{m},\quad
+\dot v_z=\frac{F_z}{m} 
+\end{equation}
+
+\subsection{转动动力学}
+
+绕质心转动的动力学方程（欧拉方程）为：
+
+\begin{equation}
+\mathbf I\dot{\boldsymbol\omega}_1=\mathbf M_C+\mathbf M_R-\boldsymbol\omega_1\times(\mathbf I\boldsymbol\omega_1) 
+\end{equation}
+
+其中 $\mathbf M_C=[M_{Cx},M_{Cy},M_{Cz}]^T$ 为控制力矩，$\mathbf M_R=[M_{Rx},M_{Ry},M_{Rz}]^T$ 为气动力矩。在 $\mathbf I=\mathrm{diag}(I_x,I_y,I_z)$ 的条件下展开得到：
+
+\begin{equation}
+\dot\omega_{x1}=\frac{M_{Cx}+M_{Rx}-(I_z-I_y)\omega_{y1}\omega_{z1}}{I_x} 
+\end{equation}
+
+\begin{equation}
+\dot\omega_{y1}=\frac{M_{Cy}+M_{Ry}-(I_x-I_z)\omega_{x1}\omega_{z1}}{I_y} 
+\end{equation}
+
+\begin{equation}
+\dot\omega_{z1}=\frac{M_{Cz}+M_{Rz}-(I_y-I_x)\omega_{x1}\omega_{y1}}{I_z} 
+\end{equation}
+
+\subsection{姿态运动学}
+
+欧拉角变化率与机体角速度之间的关系为：
+
+\begin{equation}
+\begin{aligned}
+\dot\psi &= \frac{\omega_{y1}\sin\gamma+\omega_{z1}\cos\gamma}{\cos\vartheta} \\[4pt]
+\dot\vartheta &= \omega_{y1}\cos\gamma-\omega_{z1}\sin\gamma \\[4pt]
+\dot\gamma &= \omega_{x1}+\tan\vartheta(\omega_{y1}\sin\gamma+\omega_{z1}\cos\gamma)
+\end{aligned}
+\end{equation}
+
+该方程组在 $\vartheta\to\pm90^\circ$ 时存在奇异性。工程实现中，当 $|\cos\vartheta|<10^{-3}$ 时采用限幅与步长保护策略维持数值稳定性。
+
+\subsection{位置运动学}
+
+位置运动学方程即为速度与位置之间的积分关系：
+
+\begin{equation}
+\dot x=v_x,\quad \dot y=v_y,\quad \dot z=v_z 
+\end{equation}
+
+\section{干扰项建模}
+
+逃逸任务会面临多种不确定性因素，为了评估干扰对逃逸性能的影响，需要建立六类干扰因素的数学模型，分别是风扰、发动机安装偏差、推力幅值偏差、质量偏差、初始状态偏差，以及气动和大气模型偏差。
+
+\subsection{风扰模型}
+
+设地面水平风速为 $u_0$、垂直风速为 $w_0$，则高度 $h$ 处的等效风速通过密度因子修正：
+
+\begin{equation}
+u=u_0\sqrt{\frac{\rho_0}{\rho(h)}},\quad
+w=w_0\sqrt{\frac{\rho_0}{\rho(h)}} 
+\end{equation}
+
+其中 $\rho_0=1.225\ \mathrm{kg/m^3}$。将风矢量分解到地面坐标系：
+
+\begin{equation}
+w_1=w\cos\chi_w,\quad w_2=w\sin\chi_w 
+\end{equation}
+
+风扰引起的附加攻角和附加侧滑角为：
+
+\begin{equation}
+\Delta\alpha_1=\arctan\!\left(\frac{u}{V}\cos\theta\right),\quad
+\Delta\alpha_2=\arctan\!\left(\frac{w_1\sin\theta}{V+w_1\cos\theta}\right) 
+\end{equation}
+
+\begin{equation}
+\Delta\alpha=\Delta\alpha_1+\Delta\alpha_2,\quad
+\Delta\beta=\arctan\!\left(\frac{w_2}{V}\right) 
+\end{equation}
+
+由此引起的附加气动力和力矩为：
+
+\begin{equation}
+\Delta C_Y=C_y^{\alpha}\Delta\alpha,\quad
+\Delta C_Z=C_z^{\beta}\Delta\beta 
+\end{equation}
+
+\begin{equation}
+\mathbf{F}'_{w,1}=qS\begin{compactmatrix}0 \\ \Delta C_Y \\ \Delta C_Z\end{compactmatrix},\quad
+\mathbf{M}'_{w}=qSL\begin{compactmatrix}0 \\ \Delta m_y \\ \Delta m_z\end{compactmatrix} 
+\end{equation}
+
+其中 $\Delta m_y=m_{y\beta}\Delta\beta$，$\Delta m_z=m_{z\alpha}\Delta\alpha$。
+
+\subsection{发动机安装偏差}
+
+安装偏差角 $\eta_p$ 使推力产生横向分量并引入附加力矩：
+
+\begin{equation}
+\mathbf{P}'_{\eta,1}=\begin{compactmatrix}-P\,(1-\cos\eta_p) \\[2pt] P\sin\eta_p \\[2pt] 0\end{compactmatrix} 
+\end{equation}
+
+对应的俯仰方向附加力矩为：
+
+\begin{equation}
+M'_{z,\eta}=-P\cdot l_{ACM}\cdot\sin\eta_p 
+\end{equation}
+
+其中 $P=P_{ACM}$ 。在小角度条件（$\eta_p\ll1$）下，可近似为：
+
+\begin{equation}
+\mathbf{P}'_{\eta,1}\approx\begin{compactmatrix}0 \\ P\eta_p \\ 0\end{compactmatrix},\quad
+M'_{z,\eta}\approx-P\cdot l_{ACM}\cdot\eta_p 
+\end{equation}
+
+\subsection{推力幅值偏差}
+
+推力幅值偏差 $\delta_T$ 以缩放方式作用于所有发动机：
+
+\begin{equation}
+T_k(t)=(1+\delta_T)\,T_{k,0}(t),\quad k\in\{AM,ACM,JM\} 
+\end{equation}
+
+轴向推力增量为：
+
+\begin{equation}
+F'_{xd,T}=\delta_T\,(P_{AM}+P_{ACM}+P_{JM}) 
+\end{equation}
+
+\subsection{质量偏差}
+
+设质量偏差因子为 $\delta_m$，缩放后的质量和惯量矩阵为：
+
+\begin{equation}
+m_0'=\gamma_m\,m_0,\quad
+\mathbf I_{\mathrm{stack}}'=\gamma_m\,\mathbf I_{\mathrm{stack}} 
+\end{equation}
+
+其中 $\gamma_m=1+\delta_m$ 为质量缩放系数，所有质量相关量按比例同步缩放。
+
+\subsection{初始状态偏差}
+
+初始欧拉角偏差 $\boldsymbol\Theta_b$ 和角速率偏差 $\boldsymbol\omega_b$ 叠加到标称初值上：
+
+\begin{equation}
+\boldsymbol\Theta'=\boldsymbol\Theta_0+\boldsymbol\Theta_b,\quad
+\boldsymbol\omega'=\boldsymbol\omega_0+\boldsymbol\omega_b 
+\end{equation}
+
+\subsection{气动和大气模型偏差}
+
+气动系数偏差 $\delta_a$ 和大气密度偏差 $\delta_d$ 分别修正气动力系数和大气密度：
+
+\begin{equation}
+C_X'=(1+\delta_a)C_X,\quad
+C_Y^{\alpha\prime}=(1+\delta_a)C_Y^\alpha 
+\end{equation}
+
+\begin{equation}
+\rho'(h)=(1+\delta_d)\,\rho_{\mathrm{ISA}}(h) 
+\end{equation}
+
+上述各项干扰汇总为机体系附加力/矩 $\mathbf F'_d$ 和 $\mathbf M'_d$，叠加到主方程：
+
+\begin{equation}
+\mathbf P_1\leftarrow\mathbf P_1+\mathbf F'_d,\quad
+\mathbf M_C+\mathbf M_R\leftarrow\mathbf M_C+\mathbf M_R+\mathbf M'_d 
+\end{equation}
+
+\section{仿真实现}
+
+\subsection{数值积分方法}
+
+六自由度动力学方程是一组高度非线性的常微分方程组。采用MATLAB内置的 \texttt{ode45} 求解器（基于显式Runge-Kutta Dormand-Prince 4(5)公式，即RK45变步长算法）进行数值积分。积分容差设为相对容差 $10^{-8}$、绝对容差 $10^{-10}$，以保证在最剧烈的力学耦合阶段（如最大动压区跨声速飞行段）仍能稳定收敛。
+
+\subsection{程序架构}
+
+仿真程序采用模块化架构，由以下四个核心模块组成：
+
+（1）配置模块：定义飞行器总体参数、发动机参数、制导程序角、初始条件及积分器设置等。
+
+（2）仿真管理器：负责积分流程控制。对每个工况，先加载配置，再调用 \texttt{ode45} 完成数值积分，最后进行后处理计算并输出结果。
+
+（3）导数函数：在每个积分节点上调用派生量计算函数，获得全部力与力矩后组装状态导数向量。
+
+（4）派生量计算函数：一站式计算函数，在每个时间步按序完成坐标变换、大气环境、气动力/力矩、推进推力、制导指令、控制律计算和力/力矩合成。
+
+\subsection{事件逻辑}
+
+（1）在抛塔时刻 $t_{jettison}$ 处，将时间拆分为两段，分别是 $[0,t_{jettison}]$ 和 $[t_{jettison},t_{end}]$。
+
+（2）第一段，积分到 $t_{jettison}$，此时飞行器没有分离，还是完整的船塔组合体状态。
+
+（3）在抛塔时刻，施加瞬时状态突变，质量突变为乘员舱干重质量，角速度变为零，姿态基本不变。
+
+（4）以突变后的状态作为初值，开始第二段积分，仅剩余乘员舱独立飞行直到仿真结束。
+
+发动机的开关时序与制导阶段的切换由时间决定。
+
+\subsection{初始条件与参数}
+
+两种工况的初始条件与关键参数如表~\ref{tab:params}~所示。
+
+\begin{table}[ht] % 去掉了 b 和 p 选项，改为 h 强制在当前位置显示
+\centering
+\caption{仿真主要参数}
+\label{tab:params}
+\begin{tabular}{lcc}
+\toprule
+参数 & 零高度逃逸 & 最大动压逃逸 \\
+\midrule
+初始高度 & $0\ \mathrm m$ & $9448.8\ \mathrm m$ \\
+初始速度 & $0\ \mathrm{m/s}$（静止） & Mach $1.18$ \\
+初始动压 & $0$ & $30.2\ \mathrm{kPa}$ \\
+初始俯仰角 & $89.9^\circ$ & $50.0^\circ$ \\
+初始弹道倾角 & $89.9^\circ$ & $50.0^\circ$ \\
+初始总质量 & $14333.5\ \mathrm{kg}$ & $20865.2\ \mathrm{kg}$ \\
+乘员舱质量 & $9979.0\ \mathrm{kg}$ & $9979.0\ \mathrm{kg}$ \\
+AM 工作时间 & $0\sim3.4\ \mathrm s$ & $0\sim5.0\ \mathrm s$ \\
+ACM 工作时间 & $0\sim13.3\ \mathrm s$ & $0\sim27.3\ \mathrm s$ \\
+JM 工作时间 & $13.0\sim15.0\ \mathrm s$ & $27.0\sim28.7\ \mathrm s$ \\
+抛塔时刻 & $13.0\ \mathrm s$ & $27.0\ \mathrm s$ \\
+仿真时长 & $17\ \mathrm s$ & $80\ \mathrm s$ \\
+积分方法 & \texttt{ode45} (RK45) & \texttt{ode45} (RK45) \\
+相对容差 & $10^{-8}$ & $10^{-8}$ \\
+绝对容差 & $10^{-10}$ & $10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{计算流程}
+
+每步积分中，派生量计算函数按以下顺序完成各模块的更新：
+
+（1）根据当前时刻和状态判断是否处于抛塔后阶段，选择对应的质量、惯量和参考面积；
+
+（2）计算坐标变换矩阵，将地面系速度变换到机体系；
+
+（3）根据高度计算ISA大气参数（$T,p,\rho,a$）和重力加速度 $g(h)$；
+
+（4）计算攻角 $\alpha$ 和侧滑角 $\beta$，按马赫数分段查表得气动力系数，计算气动力和力矩；
+
+（5）根据当前时刻计算各发动机推力包线值，叠加推力向量；
+
+（6）根据制导程序角和当前姿态角及角速度，计算程序角PD控制力矩并进行ACM推力分配；
+
+（7）若开启干扰项，计算附加力和力矩并叠加到总力/力矩中；
+
+（8）组装平动和转动动力学右端项，返回状态导数向量给积分器。
+
+\subsection{制导程序}
+
+两种工况的程序俯仰角 $\vartheta_{pr}(t)$ 采用分段时间指令形式：
+
+零高度逃逸分为4个阶段：
+\begin{itemize}
+    \item 俯仰转弯段（$0\sim2\ \mathrm s$）：从 $89.9^\circ$ 快速转为 $85.0^\circ$，加速建立水平速度分量；
+    \item 下程保持段（$2\sim6.0\ \mathrm s$）：缓慢减小俯仰角，维持水平加速；
+    \item 姿态重定向段（$6.0\sim10.0\ \mathrm s$）：将俯仰角转为 $-50.0^\circ$，使飞行器头部朝下准备抛塔；
+    \item 抛塔配平段（$10.0\sim13.0\ \mathrm s$）：维持重定向姿态至抛塔时刻。
+\end{itemize}
+
+最大动压逃逸分为3个阶段（不含俯仰转弯段，因初始已有 $50^\circ$ 弹道倾角）：
+\begin{itemize}
+    \item 逃逸拉离段（$0\sim15\ \mathrm s$）：维持当前姿态，依靠AM推力加速；
+    \item 姿态重定向段（$15\sim25\ \mathrm s$）：将俯仰角转为 $-50.0^\circ$；
+    \item 抛塔配平段（$25\sim27\ \mathrm s$）：维持姿态至抛塔时刻。
+\end{itemize}

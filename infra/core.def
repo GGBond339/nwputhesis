@@ -10,6 +10,9 @@
 \NewDocumentCommand{\ifprintmode}{mm}{\nwpu_if_printmode:TF{#1}{#2}}
 %%-----------------------------------------------------------------------------%
 \RequirePackage{amsmath}                                    % AMS 数学公式
+\newenvironment{compactmatrix}
+  {\left[\renewcommand{\arraystretch}{0.75}\begin{array}{*{20}{c}}}
+  {\end{array}\right]}
 \RequirePackage{amssymb}                                    % AMS 数学符号
 \RequirePackage{tikz}                                        % 彩色封面封底背景图定位
 %%=============================================================================%

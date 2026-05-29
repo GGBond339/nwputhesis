@@ -266,6 +266,7 @@
       {
         \AddToHook{env/tabular/begin}{\fontsize{\nwpuFontPointWuhao}{\nwpuGraduateTableLineHeight}\selectfont}
         \AddToHook{env/tabularx/begin}{\fontsize{\nwpuFontPointWuhao}{\nwpuGraduateTableLineHeight}\selectfont}
+        \AddToHook{env/longtable/begin}{\fontsize{\nwpuFontPointWuhao}{\nwpuGraduateTableLineHeight}\selectfont}
         \bool_gset_true:N \g__nwpu_table_content_font_hook_bool
       }
   }

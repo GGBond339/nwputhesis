@@ -1,5 +1,359 @@
-%% 第四章
+%% 第四章 蒙特卡洛仿真与结果分析
 
-\chapter{第Four章标题}
-\chaptermark{第Four章标题}
+\chapter{蒙特卡洛仿真与结果分析}
+\chaptermark{蒙特卡洛仿真与结果分析}
+
+\section{仿真配置与干扰项参数}
+
+\subsection{工况设定}
+
+本文选取发射逃逸阶段最具代表性的两种工况进行蒙特卡洛仿真分析：
+
+（1）零高度逃逸（Pad Abort）：参考猎户座PA-1试验，飞行器从发射台高度$0\ \mathrm{m}$静止状态开始逃逸。AM和ACM在$t=0$时刻同时点火，JM在$t=13.0\ \mathrm{s}$点火抛塔，仿真时长$17\ \mathrm{s}$。无扰动基准弹道的末端位置就是打靶靶点。
+
+（2）最大动压逃逸（Max-Q Abort）：参考猎户座AA-2试验，飞行器在高度$9449\ \mathrm{m}$、马赫数$1.18$、动压约$30.2\ \mathrm{kPa}$时触发逃逸。AM和ACM在$t=0$时刻点火，JM在$t=27.0\ \mathrm{s}$点火抛塔，仿真时长$80\ \mathrm{s}$。
+
+\subsection{靶点定义}
+
+两种工况的靶点分别采用各自无扰动仿真的末端位置，独立计算，互不共用，如表~\ref{tab:baseline}~所示。
+
+\begin{table}[!htbp]
+\caption{无扰动基准弹道关键指标}
+\label{tab:baseline}
+\begin{tabular}{lcc}
+\toprule
+指标 & 零高度逃逸 & 最大动压逃逸 \\
+\midrule
+末端位置 $(x,y,z)$ & $(248.08, 1781.85, -9.12)\ \mathrm m$ & $(19848.81, 6082.01, -131.13)\ \mathrm m$ \\
+末端速度 & $42.68\ \mathrm{m/s}$ & $319.96\ \mathrm{m/s}$ \\
+最高点高度 & $1781.85\ \mathrm m$ & $16430.21\ \mathrm m$ \\
+峰值动压 & $20314\ \mathrm{Pa}$ & $45706\ \mathrm{Pa}$ \\
+峰值马赫数 & $0.55$ & $1.69$ \\
+最大角速度 & $0.8670\ \mathrm{rad/s}$ & $0.2648\ \mathrm{rad/s}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{脱靶量与命中判据}
+
+定义水平脱靶量 Dh 和三维脱靶量 D3D 两类指标：
+
+\begin{equation}
+D_h = \sqrt{\Delta x^2 + \Delta z^2} 
+\end{equation}
+
+\begin{equation}
+D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2} 
+\end{equation}
+
+其中 Δx, Δy, Δz 是末端位置与靶点在三个坐标方向上的偏差。水平脱靶量反映落点偏离安全回收区域的程度，是最核心的安全性指标；三维脱靶量补充了高度方向的偏差信息。
+
+命中判据基于拉丁超立方试验（LHS）500组样本的95%分位数确定：零高度逃逸取 Dh≤50 m，最大动压逃逸取 Dh≤1000 m。这个判据允许5%的样本超限，符合工程上95%置信水平的常规做法。
+
+\subsection{干扰项分布参数}
+
+共设计六类干扰项，拆分后得到八个独立实验因素，如表~\ref{tab:disturb}~所示。所有正态干扰因素的3σ对应工程极限偏差，1σ为极限值的1/3。
+
+\begin{table}[!htbp]
+\centering % 确保表格整体在页面中居中
+\caption{干扰项分布参数}
+\label{tab:disturb}
+\begin{tabular}{lllc}
+\toprule
+干扰类别 & 实验因素 & 分布类型 & $1\sigma$ \\
+\midrule
+风扰 & 水平风速 $u_0$ & $\mathcal N(1.67, 0.215^2)\ \mathrm{m/s}$ & $0.215\ \mathrm{m/s}$ \\
+风扰 & 垂直风速 $w_0$ & $\mathcal N(3.34, 0.429^2)\ \mathrm{m/s}$，$w_0\ge0$ & $0.429\ \mathrm{m/s}$ \\
+风扰 & 水平风向 $\chi_w$ & $\mathcal U(0, 2\pi)$ & --- \\
+发动机安装偏差 & 安装偏角 $\eta_p$ & $\mathcal N(0, \sigma_\eta^2)$，$\sigma_\eta=5.817\times10^{-4}\ \mathrm{rad}$ & $0.0333^\circ$ \\
+推力幅值偏差 & 推力偏差因子 $\delta_T$ & $\mathcal N(0, \sigma_T^2)$，$\sigma_T=1.33\%$ & $1.33\%$ \\
+质量偏差 & 质量偏差因子 $\delta_m$ & $\mathcal N(0, \sigma_m^2)$，$\sigma_m=1.00\%$ & $1.00\%$ \\
+初始状态偏差 & \begin{tabular}{@{}l@{}}欧拉角偏差\\+角速率偏差\end{tabular} & \begin{tabular}{@{}l@{}}$\mathcal N(0,\sigma_\Theta^2)$，$\sigma_\Theta=0.0667^\circ$ \\ $\mathcal N(0,\sigma_\omega^2)$，$\sigma_\omega=0.05^\circ/\mathrm s$\end{tabular} & \begin{tabular}{@{}c@{}}$0.0667^\circ$ \\ $0.05^\circ/\mathrm s$\end{tabular} \\
+气动和大气模型偏差 & \begin{tabular}{@{}l@{}}气动系数\\+大气密度偏差\end{tabular} & \begin{tabular}{@{}l@{}}$\mathcal N(0,\sigma_a^2)$，$\sigma_a=3.33\%$ \\ $\mathcal N(0,\sigma_d^2)$，$\sigma_d=3.33\%$\end{tabular} & \begin{tabular}{@{}c@{}}$3.33\%$ \\ $3.33\%$\end{tabular} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+初始状态偏差作为一个实验因素处理，它的缩放系数同步影响3个欧拉角和3个角速率。气动和大气模型偏差也是一样，因素8同步影响所有气动力/力矩系数和大气密度两个物理量。
+
+\subsection{试验设计}
+
+采用两种试验设计方案~\cite{牛得清2021,佟妮宸2022,李健2019}：
+
+正交试验（$L_{27}(3^8)$）：8因素3水平，共27组试验。各因素的低（$-1\sigma$）、中（0）、高（$+1\sigma$）水平按表~\ref{tab:disturb}~的$1\sigma$设置，风扰$\chi_w$的三个水平为$0^\circ$、$120^\circ$、$240^\circ$。通过极差$R=\max(\text{平均水平})-\min(\text{平均水平})$来衡量各因素的敏感程度。
+
+拉丁超立方试验（LHS）：500组样本均匀覆盖8维设计空间，正态因素统一截断至$\pm 3\sigma$。风扰$\chi_w$保持均匀分布$\mathcal{U}(0,2\pi)$。和简单蒙特卡洛随机抽样相比，LHS能在更少的样本量下更好地覆盖整个设计空间。
+
+\subsection{评价指标}
+
+打靶试验的评价指标分为主要指标和辅助记录指标两类：
+
+主要指标：水平脱靶量 $D_h$、三维脱靶量 $D_{3D}$、命中率（$D_h \le$命中半径的比例）、最大角速度 $\omega_{\text{max}}$。
+
+辅助记录指标：末端位置 $(x,y,z)$、最高点高度 $h_{\text{max}}$、末端速度 $V_f$、峰值动压 $q_{\text{max}}$、峰值马赫数 $M_{\text{max}}$、最小俯仰角 $\theta_{\text{min}}$。
+
+其中命中率和脱靶量反映系统的精度性能，最大角速度反映姿态控制系统的裕度。
+
+\section{零高度逃逸打靶结果}
+
+\subsection{无扰动基准弹道}
+
+零高度逃逸的无扰动基准弹道主要事件时序为：俯仰转弯（$0\sim2\ \mathrm s$）、下程保持（$2\sim6.0\ \mathrm s$）、姿态重定向（$6.0\sim10.0\ \mathrm s$）、抛塔配平（$10\sim13\ \mathrm s$）、LAS抛塔（$13\ \mathrm s$）、自由飞行（$13\sim17\ \mathrm s$）。弹道最高点约 $1782\ \mathrm m$，末端位置 $(248.1, 1781.9, -9.1)\ \mathrm m$。
+
+无扰动弹道的各状态量时程如图~\ref{fig:pad_nominal}~所示。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{零高度无扰动弹道时程.png}
+\caption{零高度无扰动弹道时程}
+\label{fig:pad_nominal}
+\end{figure}
+
+从时程图中可观察到三个特征：三维轨迹呈先陡升后转为水平前飞的L形，$0\sim2\ \mathrm s$ 俯仰转弯段内速度急剧积累，之后主要依靠AM残余推力和惯性飞行；俯仰角 $\vartheta$ 在 $6.0\sim10.0\ \mathrm s$ 重定向段从约 $85^\circ$ 急剧翻转至 $-50^\circ$，对应俯仰角速度 $q$ 达到峰值，是全程姿态控制负荷最大的阶段；$t=13\ \mathrm s$ 抛塔时刻质量从约 $14.3\ \mathrm t$ 阶跃至 $10.0\ \mathrm t$，此后仅乘员舱独立飞行，质量保持恒定。
+
+\subsection{正交试验结果}
+
+27组正交试验全部有效，无仿真失败情况。
+
+命中情况：命中27组，命中率 $100\%$，超限0组。平均水平脱靶量 $22.931\ \mathrm m$，最大水平脱靶量 $42.855\ \mathrm m$。
+
+敏感性分析：通过极差分析法对8个因素按水平脱靶量极差 $R_{Dh}$ 从大到小排序，结果如表~\ref{tab:pad_ortho}~所示。各因素三水平平均脱靶量对比如图~\ref{fig:pad_ortho_me}~所示，敏感性排序如图~\ref{fig:pad_ortho_sens}~所示。
+
+\begin{table}[!htbp]
+\caption{零高度逃逸敏感性排序（正交试验）}
+\label{tab:pad_ortho}
+\begin{tabular}{clc}
+\toprule
+排名 & 因素 & 极差 $R_{Dh}$ (m) \\
+\midrule
+1 & 风扰-$\chi_w$（风向） & 13.00 \\
+2 & 风扰-$u_0$（水平风速） & 8.10 \\
+3 & 初始状态偏差 & 8.08 \\
+4 & 质量偏差 & 6.01 \\
+5 & 推力幅值偏差 & 5.47 \\
+6 & 气动和大气模型偏差 & 4.77 \\
+7 & 风扰-$w_0$（垂直风速） & 3.06 \\
+8 & 发动机安装偏差 & 1.11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{零高度正交水平脱靶量主效应.png}
+\caption{零高度正交水平脱靶量主效应}
+\label{fig:pad_ortho_me}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{零高度正交水平脱靶量灵敏度.png}
+\caption{零高度正交水平脱靶量灵敏度排序}
+\label{fig:pad_ortho_sens}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{零高度正交终端角速率灵敏度.png}
+\caption{零高度正交终端角速率灵敏度}
+\label{fig:pad_ortho_omega}
+\end{figure}
+
+由表~\ref{tab:pad_ortho}~可见，风扰（特别是风向 $\chi_w$ 和水平风速 $u_0$）是影响脱靶量最主要的因素，极差达 $13.00\ \mathrm m$；初始状态偏差紧随其后（$8.08\ \mathrm m$）；质量偏差和推力幅值偏差的影响中等；发动机安装偏差的影响最小，极差仅 $1.11\ \mathrm m$。
+
+各因素三水平平均脱靶量对比呈以下趋势：风扰 $u_0$ 具有明显的单调递增特征——水平风速越大脱靶量越大；风扰 $w_0$ 呈单调递减趋势，垂直风速越大脱靶量反而越小；风向 $\chi_w$ 在中间水平（$120^\circ$）时脱靶量最大，呈非单调特征，这可能与特定风向下气动力和力矩的耦合效应有关。
+
+\subsection{拉丁超立方试验结果}
+
+500组样本全部有效，无仿真失败情况。
+
+命中统计：
+\begin{itemize}
+    \item 命中481组，超限19组，命中率96.20\%
+    \item 平均水平脱靶量 $25.473\ \mathrm m$，标准差 $11.316\ \mathrm m$
+    \item $95\%$ 分位数 $47.331\ \mathrm m$，最大水平脱靶量 $69.820\ \mathrm m$
+    \item 平均三维脱靶量 $47.742\ \mathrm m$，最大三维脱靶量 $161.543\ \mathrm m$
+\end{itemize}
+
+末端水平散布如图~\ref{fig:pad_lhs_scatter}~所示。样本大部分落在 $50\ \mathrm m$ 命中半径以内，极少数样本偏离较远，说明在极端扰动组合下末端偏差会显著增大。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{零高度LHS终端散布.png}
+\caption{零高度LHS终端水平散布}
+\label{fig:pad_lhs_scatter}
+\end{figure}
+
+水平脱靶量的累计分布如图~\ref{fig:pad_lhs_cdf}~所示。约 $75\%$ 的样本 $D_h<35\ \mathrm m$，约 $96.2\%$ 的样本 $D_h<50\ \mathrm m$。曲线尾部较为平缓，说明大偏差样本的出现概率较低。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{零高度LHS水平脱靶量CDF.png}
+\caption{零高度LHS水平脱靶量累计分布}
+\label{fig:pad_lhs_cdf}
+\end{figure}
+
+角速度：平均最大角速度 $0.8674\ \mathrm{rad/s}$，最大角速度 $0.8700\ \mathrm{rad/s}$。所有样本的姿态保持稳定。
+
+关键飞行指标的整体分布如图~\ref{fig:pad_lhs_dist}~所示。各项指标在扰动下均呈现良好的单峰分布：最高点高度集中在 $1700\sim1900\ \mathrm m$，末端速度集中在 $40\sim50\ \mathrm{m/s}$，峰值动压约 $18000\sim22000\ \mathrm{Pa}$，峰值马赫数约 $0.5\sim0.6$。姿态角速度极为稳定（约 $0.8674\ \mathrm{rad/s}$），最小俯仰角保持在 $-50^\circ$ 附近（姿态重定向的目标角度）。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{零高度LHS关键指标分布.png}
+\caption{零高度LHS关键指标分布}
+\label{fig:pad_lhs_dist}
+\end{figure}
+
+\section{最大动压逃逸打靶结果}
+
+\subsection{无扰动基准弹道}
+
+最大动压逃逸的无扰动基准弹道初始高度约 $9448.8\ \mathrm m$，初始马赫数约 $1.18$。主要事件时序为：逃逸拉离（$0\sim15\ \mathrm s$）、姿态重定向（$15\sim25\ \mathrm s$）、抛塔配平（$25\sim27\ \mathrm s$）、抛塔（$27\ \mathrm s$）、自由飞行（$27\sim80\ \mathrm s$）。弹道最高点 $16430.21\ \mathrm m$。末端位置 $(19848.81, 6082.01, -131.13)\ \mathrm m$。
+
+无扰动弹道的各状态量时程如图~\ref{fig:mq_nominal}~所示。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{最大动压无扰动弹道时程.png}
+\caption{最大动压无扰动弹道时程}
+\label{fig:mq_nominal}
+\end{figure}
+
+与零高度逃逸相比，最大动压逃逸的时程图呈现三个显著差异：三维轨迹的纵向跨度远大于水平跨度（约20 km对比约250 m），飞行器以初始 $50^\circ$ 弹道倾角快速爬升，AM关机后继续依靠惯性上升至最高点；角速度曲线极为平坦，即使在姿态重定向段（$15\sim25\ \mathrm s$）也仅出现小幅波动，说明高动压条件下的气动恢复力矩为姿态提供了充足的自然阻尼；自由飞行段长达53 s（$27\sim80\ \mathrm s$），远长于零高度逃逸的4 s，长积分时间使扰动效应有充分积累空间，是末端散布量级大的重要原因。
+
+\subsection{正交试验结果}
+
+27组正交试验全部有效。
+
+命中情况（命中半径1000 m）：命中27组，命中率 $100\%$，超限0组。平均水平脱靶量 $416.237\ \mathrm m$，最大水平脱靶量 $733.639\ \mathrm m$。
+
+敏感性分析：排序结果如表~\ref{tab:mq_ortho}~所示。
+
+\begin{table}[!htbp]
+\caption{最大动压逃逸敏感性排序（正交试验）}
+\label{tab:mq_ortho}
+\begin{tabular}{clc}
+\toprule
+排名 & 因素 & 极差 $R_{Dh}$ (m) \\
+\midrule
+1 & 气动和大气模型偏差 & 276.30 \\
+2 & 风扰-$w_0$（垂直风速） & 195.59 \\
+3 & 风扰-$\chi_w$（风向） & 111.07 \\
+4 & 质量偏差 & 86.47 \\
+5 & 发动机安装偏差 & 35.52 \\
+6 & 初始状态偏差 & 35.32 \\
+7 & 风扰-$u_0$（水平风速） & 27.95 \\
+8 & 推力幅值偏差 & 14.38 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+与零高度逃逸不同，最大动压逃逸中气动和大气模型偏差是影响最大的因素，极差达 $276.30\ \mathrm m$，显著高于其他因素。这是因为最大动压逃逸初始速度大（Mach 1.18）、动压高（约30 kPa），气动效应非常显著，气动参数的不确定性对弹道的影响更为突出。风扰中的垂直分量 $w_0$ 和风向 $\chi_w$ 也是重要影响因素。
+
+各因素三水平平均脱靶量对比如图~\ref{fig:mq_ortho_me}~所示，敏感性排序如图~\ref{fig:mq_ortho_sens}~所示，正交试验角速度敏感性如图~\ref{fig:mq_ortho_omega}~所示。气动和大气模型偏差在0水平附近脱靶量最小，呈U形特征；风扰 $w_0$ 呈明显的单调递增趋势；质量偏差也具有类似的单调性。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{最大动压正交水平脱靶量主效应.png}
+\caption{最大动压正交水平脱靶量主效应}
+\label{fig:mq_ortho_me}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{最大动压正交水平脱靶量灵敏度.png}
+\caption{最大动压正交水平脱靶量灵敏度排序}
+\label{fig:mq_ortho_sens}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{最大动压正交终端角速率灵敏度.png}
+\caption{最大动压正交终端角速率灵敏度}
+\label{fig:mq_ortho_omega}
+\end{figure}
+
+\subsection{拉丁超立方试验结果}
+
+500组样本全部有效。
+
+命中统计（命中半径1000 m）：
+\begin{itemize}
+    \item 命中476组，超限24组，命中率95.20\%
+    \item 平均水平脱靶量 $456.333\ \mathrm m$，标准差 $242.785\ \mathrm m$
+    \item $95\%$ 分位数 $977.322\ \mathrm m$，最大水平脱靶量 $1414.684\ \mathrm m$
+    \item 平均三维脱靶量 $468.527\ \mathrm m$，最大三维脱靶量 $1444.177\ \mathrm m$
+\end{itemize}
+
+末端水平散布如图~\ref{fig:mq_lhs_scatter}~所示。最大动压逃逸的散布范围远大于零高度逃逸（1000 m量级对比10 m量级），这是因为初始动压大、飞行时间长（80 s），扰动在涡轮速度下的积累效应更为显著。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{最大动压LHS终端散布.png}
+\caption{最大动压LHS终端水平散布}
+\label{fig:mq_lhs_scatter}
+\end{figure}
+
+水平脱靶量的累计分布如图~\ref{fig:mq_lhs_cdf}~所示。分布较为分散，$p95$ 约977 m，尾部延伸到1400 m以上，与零高度逃逸的紧凑分布形成鲜明对比。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{最大动压LHS水平脱靶量CDF.png}
+\caption{最大动压LHS水平脱靶量累计分布}
+\label{fig:mq_lhs_cdf}
+\end{figure}
+
+角速度：平均最大角速度 $0.2648\ \mathrm{rad/s}$，最大角速度 $0.2652\ \mathrm{rad/s}$。角速度变化幅度仅 $0.0004\ \mathrm{rad/s}$（约 $0.15\%$），远小于零高度逃逸的变化幅度。这是因为最大动压逃逸全程气动阻尼较大，姿态受扰动影响极小。
+
+关键飞行指标的整体分布如图~\ref{fig:mq_lhs_dist}~所示。最高点高度集中在 $16200\sim16750\ \mathrm m$，末端速度约 $290\sim354\ \mathrm{m/s}$，峰值动压约 $41700\sim49800\ \mathrm{Pa}$。与零高度逃逸相比，各项指标的变化幅度更大，反映了长飞行时间内扰动积累的效果。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{最大动压LHS关键指标分布.png}
+\caption{最大动压LHS关键指标分布}
+\label{fig:mq_lhs_dist}
+\end{figure}
+
+\section{两种工况对比分析}
+
+\subsection{散布特征对比}
+
+两种工况的最核心差异性体现在散布量级和敏感性规律上，归纳如表~\ref{tab:compare_results}~所示。
+
+\begin{table}[!htbp]
+\caption{两种工况打靶结果对比}
+\label{tab:compare_results}
+\begin{tabular}{lcc}
+\toprule
+对比项 & 零高度逃逸 & 最大动压逃逸 \\
+\midrule
+命中半径 & $50\ \mathrm m$ & $1000\ \mathrm m$ \\
+LHS命中率 & $96.20\%$ & $95.20\%$ \\
+$D_h$ 均值 & $25.473\ \mathrm m$ & $456.333\ \mathrm m$ \\
+$D_h$ 标准差 & $11.316\ \mathrm m$ & $242.785\ \mathrm m$ \\
+$D_h$ 最大偏差 & $69.820\ \mathrm m$ & $1414.684\ \mathrm m$ \\
+$D_h$ $95\%$ 分位数 & $47.331\ \mathrm m$ & $977.322\ \mathrm m$ \\
+散布量级 & $\sim10^1\ \mathrm m$ & $\sim10^3\ \mathrm m$ \\
+最大角速度变化 & $0.0025\ \mathrm{rad/s}$ & $0.0004\ \mathrm{rad/s}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{敏感性差异}
+
+两种工况的最敏感因素截然不同：
+
+零高度逃逸对风扰最为敏感，这与其地面低速飞行的物理背景一致。飞行器从静止开始逃逸，初始阶段速度低，气动阻尼效应弱，ACM姿控系统需要直接对抗风场产生的附加力和力矩。因此风向和风速的小幅变化即可引起末端落点的显著偏差。
+
+最大动压逃逸对气动和大气模型偏差最为敏感。初始状态飞行器已处于高速（Mach 1.18）和高动压（约30 kPa）条件下，气动效应占据主导地位。气动系数和大气密度的不确定性会通过气动方程直接映射为弹道偏差，且长达80 s的飞行时间使这种偏差不断积累放大。
+
+\subsection{物理原因分析}
+
+散布量级的悬殊差异（$10^1\ \mathrm m$ vs $10^3\ \mathrm m$）主要源于以下两个物理因素：
+
+（1）飞行时间差异：零高度逃逸仿真时长17 s，最大动压逃逸80 s。后者更长的积分时间使干扰效应在模型中不断积累，导致末端散布显著扩大。
+
+（2）初始能量差异：最大动压逃逸的初始速度和动压远高于零高度逃逸。高动压条件下，相同的干扰项百分比偏差会产生更大的绝对偏差量。例如 $\pm3.33\%$ 的气动系数偏差在动压30 kPa下产生的绝对力偏差是动压0 Pa下的数十倍。
+
+两种工况的角速度变化极小（零高度 $0.0025\ \mathrm{rad/s}$，最大动压 $0.0004\ \mathrm{rad/s}$），说明在标称控制增益下，ACM姿控系统对两类工况的扰动都有足够的控制裕度，姿态稳定性良好。
 
