@@ -165,7 +165,7 @@ g(h)=g_0\left(\frac{R_e}{R_e+h}\right)^2
 
 \subsection{大气模型}
 
-大气环境采用国际标准大气（ISA）0--47 km分层模型~\cite{ISO2533,GB192}。基本常数取值如下：
+大气环境采用国际标准大气（ISA）0--47 km分层模型~\cite{ISA}。基本常数取值如下：
 
 \begin{equation}
 T_0=288.15\ \mathrm K,\quad p_0=101325\ \mathrm{Pa},\quad R=287.05\ \mathrm{J/(kg\cdot K)}
@@ -612,7 +612,7 @@ C_Y^{\alpha\prime}=(1+\delta_a)C_Y^\alpha
 
 \subsection{数值积分方法}
 
-六自由度动力学方程是一组高度非线性的常微分方程组。采用MATLAB内置的 \texttt{ode45} 求解器（基于显式Runge-Kutta Dormand-Prince 4(5)公式，即RK45变步长算法）进行数值积分。积分容差设为相对容差 $10^{-8}$、绝对容差 $10^{-10}$，以保证在最剧烈的力学耦合阶段（如最大动压区跨声速飞行段）仍能稳定收敛。
+六自由度动力学方程是一组高度非线性的常微分方程组。采用MATLAB内置的 \texttt{ode45} 求解器（基于显式Runge-Kutta Dormand-Prince 4(5)公式，即RK45变步长算法）进行数值积分~\cite{薛源2016}。积分容差设为相对容差 $10^{-8}$、绝对容差 $10^{-10}$，以保证在最剧烈的力学耦合阶段（如最大动压区跨声速飞行段）仍能稳定收敛。
 
 \subsection{程序架构}
 
