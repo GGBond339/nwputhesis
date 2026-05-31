@@ -10,7 +10,7 @@
 \begin{table}[htbp]
 \caption{风险评估指标与阈值}
 \label{tab:risk_threshold}
-\begin{tabular}{lcccp{2.8cm}}
+\begin{tabularx}{\textwidth}{LCCCP{3cm}}
 \toprule
 指标 & 符号 & 零高度阈值 & 最大动压阈值 & 物理含义 \\
 \midrule
@@ -21,7 +21,7 @@
 峰值动压 & $q_{max}$ & $\le 50\ \mathrm{kPa}$ & $\le 50\ \mathrm{kPa}$ & 飞行器结构及分离机构承载上限 \\
 末端速度 & $V_f$ & 无独立阈值 & 无独立阈值 & 辅助参考，不开伞段末速不具备约束意义 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 命中半径$50\ \mathrm{m}$（零高度）和$1000\ \mathrm{m}$（最大动压）直接采用第4章基于500组LHS样本$95\%$分位数确定的命中判据。角速度阈值$1.0\ \mathrm{rad/s}$由估算得到。最高点高度阈值$1500\ \mathrm{m}$参照猎户座PA-1试验经验：该试验远地点约$1800\ \mathrm{m}$，成功完成降落伞展开与着陆，因此$1500\ \mathrm{m}$可作为最低安全高度的参考下限。峰值动压阈值$50\ \mathrm{kPa}$也由估算得到。
@@ -43,7 +43,7 @@
 \begin{table}[htbp]
 \caption{零高度逃逸命中风险统计}
 \label{tab:pad_risk_hit}
-\begin{tabular}{lc}
+\begin{tabularx}{\textwidth}{>{\hsize=1.3\hsize}L >{\hsize=0.7\hsize}C}
 \toprule
 指标 & 数值 \\
 \midrule
@@ -54,7 +54,7 @@ $D_h$ 标准差 & $11.316\ \mathrm m$ \\
 $D_h$ $p95$ 分位数 & $47.331\ \mathrm m$ \\
 $D_h$ 最大值 & $69.820\ \mathrm m$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 命中风险等级为低风险。$96.20\%$ 的样本落在 $50\ \mathrm m$ 命中半径以内，$3.80\%$ 的超限比例低于 $5\%$ 的低风险阈值。最恶劣 $5\%$ 样本的脱靶量分布在 $47\sim70\ \mathrm m$ 区间，整体偏差幅度可控。
@@ -68,7 +68,7 @@ $D_h$ 最大值 & $69.820\ \mathrm m$ \\
 \begin{table}[htbp]
 \caption{零高度逃逸姿态风险统计}
 \label{tab:pad_risk_omega}
-\begin{tabular}{lc}
+\begin{tabularx}{\textwidth}{>{\hsize=1.3\hsize}L >{\hsize=0.7\hsize}C}
 \toprule
 指标 & 数值 \\
 \midrule
@@ -76,7 +76,7 @@ $\omega_{max}$ 均值 & $0.8674\ \mathrm{rad/s}$ \\
 $\omega_{max}$ 最大值 & $0.8700\ \mathrm{rad/s}$ \\
 变化幅度（最大值$-$均值） & $0.0025\ \mathrm{rad/s}$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 姿态风险等级为低风险。500组样本间的角速度变化幅度仅为 $0.0025\ \mathrm{rad/s}$，表明标称PD控制增益下ACM姿控系统对各类扰动均有充分的控制裕度，扰动不引起姿态失稳。标称最大角速度 $0.867\ \mathrm{rad/s}$ 主要由压缩制导时间线后的姿态重定向机动决定，与扰动无关。此外，所有样本的角速度均远低于 $1.0\ \mathrm{rad/s}$ 的工程阈值，角速度超限概率 $P_{exceed}=0\%$。
@@ -90,7 +90,7 @@ $\omega_{max}$ 最大值 & $0.8700\ \mathrm{rad/s}$ \\
 \begin{table}[htbp]
 \caption{零高度逃逸敏感性排序}
 \label{tab:pad_sens}
-\begin{tabular}{clc}
+\begin{tabularx}{\textwidth}{CLC}
 \toprule
 排名 & 因素 & 极差 $R_{Dh}$ (m) \\
 \midrule
@@ -103,7 +103,7 @@ $\omega_{max}$ 最大值 & $0.8700\ \mathrm{rad/s}$ \\
 7 & 风扰-$w_0$（垂直风速） & 3.06 \\
 8 & 发动机安装偏差 & 1.11 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 从物理机制分析，零高度逃逸初始阶段速度低、气动阻尼弱，姿态控制主要依赖ACM喷气直接维持稳定。风场扰动作用于飞行器气动外形所产生的附加力和力矩无法被ACM完全抑制，因此风的强度和方向成为最主要的风险来源。
@@ -117,7 +117,7 @@ $\omega_{max}$ 最大值 & $0.8700\ \mathrm{rad/s}$ \\
 \begin{table}[htbp]
 \caption{最大动压逃逸命中风险统计}
 \label{tab:mq_risk_hit}
-\begin{tabular}{lc}
+\begin{tabularx}{\textwidth}{>{\hsize=1.3\hsize}L >{\hsize=0.7\hsize}C}
 \toprule
 指标 & 数值 \\
 \midrule
@@ -128,7 +128,7 @@ $D_h$ 标准差 & $242.785\ \mathrm m$ \\
 $D_h$ $p95$ 分位数 & $977.322\ \mathrm m$ \\
 $D_h$ 最大值 & $1414.684\ \mathrm m$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 命中风险等级为低风险。$95.20\%$ 的样本落在 $1000\ \mathrm m$ 命中半径以内，超限比例 $4.80\%$。但与零高度逃逸相比，散布量级显著增大——$D_h$ 标准差达 $242.785\ \mathrm m$，最恶劣组合下的脱靶量可达 $1414.684\ \mathrm m$，尾部风险远高于零高度工况。
@@ -142,7 +142,7 @@ $D_h$ 最大值 & $1414.684\ \mathrm m$ \\
 \begin{table}[htbp]
 \caption{最大动压逃逸姿态风险统计}
 \label{tab:mq_risk_omega}
-\begin{tabular}{lc}
+\begin{tabularx}{\textwidth}{>{\hsize=1.3\hsize}L >{\hsize=0.7\hsize}C}
 \toprule
 指标 & 数值 \\
 \midrule
@@ -150,7 +150,7 @@ $\omega_{max}$ 均值 & $0.2648\ \mathrm{rad/s}$ \\
 $\omega_{max}$ 最大值 & $0.2652\ \mathrm{rad/s}$ \\
 变化幅度（最大值$-$均值） & $0.0004\ \mathrm{rad/s}$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 姿态风险等级为低风险。最大角速度均值仅为零高度逃逸的三分之一（$0.2648\ \mathrm{rad/s}$ 对比 $0.8674\ \mathrm{rad/s}$），全样本变化幅度仅 $0.0004\ \mathrm{rad/s}$（约 $0.15\%$），角速度超限概率 $P_{exceed}=0\%$。物理上，高动压条件下的气动恢复力矩为姿态控制系统提供了充足的自然阻尼，因此最大动压逃逸的姿态稳定性优于零高度逃逸。
@@ -164,7 +164,7 @@ $\omega_{max}$ 最大值 & $0.2652\ \mathrm{rad/s}$ \\
 \begin{table}[htbp]
 \caption{最大动压逃逸敏感性排序}
 \label{tab:mq_sens}
-\begin{tabular}{clc}
+\begin{tabularx}{\textwidth}{CLC}
 \toprule
 排名 & 因素 & 极差 $R_{Dh}$ (m) \\
 \midrule
@@ -177,7 +177,7 @@ $\omega_{max}$ 最大值 & $0.2652\ \mathrm{rad/s}$ \\
 7 & 风扰-$u_0$（水平风速） & 27.95 \\
 8 & 推力幅值偏差 & 14.38 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 物理机制上，最大动压逃逸初始动压高（约30 kPa），气动参数的小幅偏差通过 $q=\frac12\rho V^2S$ 放大为显著的力和力矩偏差，且长达80 s的飞行时间使该偏差持续积累。因此气动系数和大气密度的工程不确定性成为制约弹道精度的首要风险。
@@ -189,7 +189,7 @@ $\omega_{max}$ 最大值 & $0.2652\ \mathrm{rad/s}$ \\
 \begin{table}[htbp]
 \caption{两种工况风险评估对比}
 \label{tab:risk_compare}
-\begin{tabular}{lcc}
+\begin{tabularx}{\textwidth}{LCC}
 \toprule
 评估项 & 零高度逃逸 & 最大动压逃逸 \\
 \midrule
@@ -199,13 +199,13 @@ $\omega_{max}$ 最大值 & $0.2652\ \mathrm{rad/s}$ \\
 次要风险因素 & 初始状态偏差、质量偏差 & 风扰（垂直风/风向） \\
 尾部风险特征 & 紧凑（$\max\ D_h\approx 70\ \mathrm m$） & 分散（$\max\ D_h\approx 1415\ \mathrm m$） \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{table}[htbp]
 \caption{超限概率汇总}
 \label{tab:exceed_summary}
-\begin{tabular}{lcccc}
+\begin{tabularx}{\textwidth}{LCCCC}
 \toprule
 指标 & 零高度 $P_{exceed}$ & 零高度等级 & 最大动压 $P_{exceed}$ & 最大动压等级 \\
 \midrule
@@ -215,7 +215,7 @@ $\omega_{max}$ 最大值 & $0.2652\ \mathrm{rad/s}$ \\
 最高点高度 $h_{max}$ & $0\%$ & 低风险 & $0\%$ & 低风险 \\
 峰值动压 $q_{max}$ & $0\%$ & 低风险 & $0\%$ & 低风险 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 综合结论如下：

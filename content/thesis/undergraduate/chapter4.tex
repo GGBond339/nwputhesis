@@ -20,7 +20,7 @@
 \begin{table}[!htbp]
 \caption{无扰动基准弹道关键指标}
 \label{tab:baseline}
-\begin{tabular}{lcc}
+\begin{tabularx}{\textwidth}{LCC}
 \toprule
 指标 & 零高度逃逸 & 最大动压逃逸 \\
 \midrule
@@ -31,7 +31,7 @@
 峰值马赫数 & $0.55$ & $1.69$ \\
 最大角速度 & $0.8670\ \mathrm{rad/s}$ & $0.2648\ \mathrm{rad/s}$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{脱靶量与命中判据}
@@ -58,7 +58,7 @@ D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}
 \centering % 确保表格整体在页面中居中
 \caption{干扰项分布参数}
 \label{tab:disturb}
-\begin{tabular}{lllc}
+\begin{tabularx}{\textwidth}{>{\hsize=0.6\hsize}L >{\hsize=0.65\hsize}L >{\hsize=1.45\hsize}L >{\hsize=0.7\hsize}C}
 \toprule
 干扰类别 & 实验因素 & 分布类型 & $1\sigma$ \\
 \midrule
@@ -71,7 +71,7 @@ D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}
 初始状态偏差 & \begin{tabular}{@{}l@{}}欧拉角偏差\\+角速率偏差\end{tabular} & \begin{tabular}{@{}l@{}}$\mathcal N(0,\sigma_\Theta^2)$，$\sigma_\Theta=0.0667^\circ$ \\ $\mathcal N(0,\sigma_\omega^2)$，$\sigma_\omega=0.05^\circ/\mathrm s$\end{tabular} & \begin{tabular}{@{}c@{}}$0.0667^\circ$ \\ $0.05^\circ/\mathrm s$\end{tabular} \\
 气动和大气模型偏差 & \begin{tabular}{@{}l@{}}气动系数\\+大气密度偏差\end{tabular} & \begin{tabular}{@{}l@{}}$\mathcal N(0,\sigma_a^2)$，$\sigma_a=3.33\%$ \\ $\mathcal N(0,\sigma_d^2)$，$\sigma_d=3.33\%$\end{tabular} & \begin{tabular}{@{}c@{}}$3.33\%$ \\ $3.33\%$\end{tabular} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 初始状态偏差作为一个实验因素处理，它的缩放系数同步影响3个欧拉角和3个角速率。气动和大气模型偏差也是一样，因素8同步影响所有气动力/力矩系数和大气密度两个物理量。
@@ -122,7 +122,7 @@ D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}
 \begin{table}[!htbp]
 \caption{零高度逃逸敏感性排序（正交试验）}
 \label{tab:pad_ortho}
-\begin{tabular}{clc}
+\begin{tabularx}{\textwidth}{CLC}
 \toprule
 排名 & 因素 & 极差 $R_{Dh}$ (m) \\
 \midrule
@@ -135,7 +135,7 @@ D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}
 7 & 风扰-$w_0$（垂直风速） & 3.06 \\
 8 & 发动机安装偏差 & 1.11 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \begin{figure}[H]
@@ -232,7 +232,7 @@ D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}
 \begin{table}[!htbp]
 \caption{最大动压逃逸敏感性排序（正交试验）}
 \label{tab:mq_ortho}
-\begin{tabular}{clc}
+\begin{tabularx}{\textwidth}{CLC}
 \toprule
 排名 & 因素 & 极差 $R_{Dh}$ (m) \\
 \midrule
@@ -245,7 +245,7 @@ D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}
 7 & 风扰-$u_0$（水平风速） & 27.95 \\
 8 & 推力幅值偏差 & 14.38 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 与零高度逃逸不同，最大动压逃逸中气动和大气模型偏差是影响最大的因素，极差达 $276.30\ \mathrm m$，显著高于其他因素。这是因为最大动压逃逸初始速度大（Mach 1.18）、动压高（约30 kPa），气动效应非常显著，气动参数的不确定性对弹道的影响更为突出。风扰中的垂直分量 $w_0$ 和风向 $\chi_w$ 也是重要影响因素。
@@ -323,7 +323,7 @@ D_{3D} = \sqrt{\Delta x^2 + \Delta y^2 + \Delta z^2}
 \begin{table}[!htbp]
 \caption{两种工况打靶结果对比}
 \label{tab:compare_results}
-\begin{tabular}{lcc}
+\begin{tabularx}{\textwidth}{LCC}
 \toprule
 对比项 & 零高度逃逸 & 最大动压逃逸 \\
 \midrule
@@ -336,7 +336,7 @@ $D_h$ $95\%$ 分位数 & $47.331\ \mathrm m$ & $977.322\ \mathrm m$ \\
 散布量级 & $\sim10^1\ \mathrm m$ & $\sim10^3\ \mathrm m$ \\
 最大角速度变化 & $0.0025\ \mathrm{rad/s}$ & $0.0004\ \mathrm{rad/s}$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{敏感性差异}

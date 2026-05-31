@@ -6,18 +6,14 @@
 
 \subsection{坐标系与状态变量}
 
-\begin{longtable}{cl}
+\begin{table}[H]
+\centering
+\caption{坐标系与状态变量符号}
+\label{tab:sym_coord}
+\begin{tabularx}{\textwidth}{>{\hsize=0.6\hsize}L >{\hsize=1.4\hsize}L}
 \toprule
 符号 & 含义 \\
 \midrule
-\endfirsthead
-\multicolumn{2}{c}{\tablename\ \thetable\ -- 续表} \\
-\toprule
-符号 & 含义 \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 $Axyz$ & 地面坐标系，$Ay$ 竖直向上 \\
 $Ox_1y_1z_1$ & 机体坐标系，原点在质心，$Ox_1$ 指向塔尖 \\
 $Ox_2y_2z_2$ & 弹道坐标系，$Ox_2\parallel\mathbf v$ \\
@@ -27,22 +23,20 @@ $\mathbf r_A=[x,y,z]^T$ & 地面系位置 \\
 $\mathbf v_A=[v_x,v_y,v_z]^T$ & 地面系速度 \\
 $\boldsymbol\Theta=[\psi,\vartheta,\gamma]^T$ & 欧拉角（偏航、俯仰、滚转） \\
 $\boldsymbol\omega_1=[\omega_{x1},\omega_{y1},\omega_{z1}]^T$ & 机体系角速度 \\
-\end{longtable}
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{气动参数}
 
-\begin{longtable}{cl}
+\begin{table}[H]
+\centering
+\caption{气动参数符号}
+\label{tab:sym_aero}
+\begin{tabularx}{\textwidth}{>{\hsize=0.6\hsize}L >{\hsize=1.4\hsize}L}
 \toprule
 符号 & 含义 \\
 \midrule
-\endfirsthead
-\multicolumn{2}{c}{\tablename\ \thetable\ -- 续表} \\
-\toprule
-符号 & 含义 \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 $\alpha,\beta$ & 攻角、侧滑角 \\
 $q$ & 动压，$q=\frac12\rho V^2$ \\
 $M$ & 马赫数 \\
@@ -53,22 +47,20 @@ $C_y^\alpha,C_z^\beta$ & 法向/侧向力系数导数 \\
 $m_x,m_y,m_z$ & 气动力矩系数 \\
 $m_{z\alpha},m_{y\beta}$ & 静导数 \\
 $m_{z\omega},m_{y\omega}$ & 阻尼导数 \\
-\end{longtable}
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{推进与控制}
 
-\begin{longtable}{cl}
+\begin{table}[H]
+\centering
+\caption{推进与控制符号}
+\label{tab:sym_prop}
+\begin{tabularx}{\textwidth}{>{\hsize=0.6\hsize}L >{\hsize=1.4\hsize}L}
 \toprule
 符号 & 含义 \\
 \midrule
-\endfirsthead
-\multicolumn{2}{c}{\tablename\ \thetable\ -- 续表} \\
-\toprule
-符号 & 含义 \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 $P_{AM},P_{ACM},P_{JM}$ & 三发动机推力标量 \\
 $\mathbf P_1$ & 机体系推力向量 \\
 $\mathbf M_C$ & 控制力矩向量 \\
@@ -77,22 +69,20 @@ $\dot m$ & 质量流率 \\
 $K_\vartheta,K_\psi,K_\gamma$ & 三轴控制增益 \\
 $l_{ACM}$ & ACM 喷管力臂 \\
 $\vartheta_{pr},\psi_{pr},\gamma_{pr}$ & 程序姿态角 \\
-\end{longtable}
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{干扰项}
 
-\begin{longtable}{cl}
+\begin{table}[H]
+\centering
+\caption{干扰项符号}
+\label{tab:sym_disturb}
+\begin{tabularx}{\textwidth}{>{\hsize=0.6\hsize}L >{\hsize=1.4\hsize}L}
 \toprule
 符号 & 含义 \\
 \midrule
-\endfirsthead
-\multicolumn{2}{c}{\tablename\ \thetable\ -- 续表} \\
-\toprule
-符号 & 含义 \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 $u_0,w_0$ & 地面水平/垂直风速 \\
 $\chi_w$ & 水平风向角 \\
 $\eta_p$ & 发动机安装偏差角 \\
@@ -100,22 +90,20 @@ $\delta_T$ & 推力幅值偏差因子 \\
 $\delta_m$ & 质量偏差因子 \\
 $\delta_a,\delta_d$ & 气动系数/大气密度偏差因子 \\
 $\boldsymbol\Theta_b,\boldsymbol\omega_b$ & 初始欧拉角/角速率偏差 \\
-\end{longtable}
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{其他}
 
-\begin{longtable}{cl}
+\begin{table}[H]
+\centering
+\caption{其他符号}
+\label{tab:sym_other}
+\begin{tabularx}{\textwidth}{>{\hsize=0.6\hsize}L >{\hsize=1.4\hsize}L}
 \toprule
 符号 & 含义 \\
 \midrule
-\endfirsthead
-\multicolumn{2}{c}{\tablename\ \thetable\ -- 续表} \\
-\toprule
-符号 & 含义 \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 $g(h)$ & 重力加速度（随高度变化） \\
 $\rho(h)$ & 大气密度（随高度变化） \\
 $a(h)$ & 声速（随高度变化） \\
@@ -124,6 +112,8 @@ $\mathbf I$ & 惯量矩阵 $\mathrm{diag}(I_x,I_y,I_z)$ \\
 $\mathbf R_1,\mathbf R_A$ & 气动力（机体系、地面系） \\
 $\mathbf G_A$ & 重力向量（地面系） \\
 $D_h,D_{3D}$ & 水平/三维脱靶量 \\
-\end{longtable}
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \end{thesisappendix}
