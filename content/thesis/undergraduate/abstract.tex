@@ -1,25 +1,25 @@
 %% 摘要
 
 \begin{abstract}
-    发射逃逸系统在载人航天中直接关系航天员生命安全。针对未来载人登月任务的需求，本文选取猎户座飞船作为参考对象，围绕发射逃逸阶段展开六自由度动力学建模、蒙特卡洛仿真分析与风险评估研究。
+    发射逃逸系统直接关系航天员生命安全。针对载人登月任务需求，本文以猎户座飞船为参考构型，开展发射逃逸阶段六自由度动力学建模、蒙特卡洛仿真与风险评估研究。
 
-    构建的六自由度仿真模型包含坐标系转换、ISA标准大气模型、按马赫数分段的气动力模型、AM/ACM/JM多发动机联合推进系统以及程序角PD姿态控制律，推导了完整的平动与转动微分方程。为模拟真实飞行条件，模型还纳入了风扰、发动机安装偏差、推力与质量偏差、初始状态偏差、气动与大气模型偏差等六类干扰因素，共计八个独立实验变量。
+    建立了发射逃逸六自由度动力学仿真模型，包含坐标系变换、国际标准大气（ISA）模型、马赫数分段气动模型、逃逸主发动机（AM）/姿控发动机（ACM）/抛塔发动机（JM）多发动机推进系统和比例-微分（PD）姿控律，引入风扰、推力偏差、质量偏差和气动偏差等六类干扰因素，实现了零高度逃逸和最大动压逃逸两种工况的数值仿真。
 
-    对零高度逃逸和最大动压逃逸两种工况，分别采用$L_{27}(3^8)$正交试验和500组拉丁超立方抽样进行打靶分析。结果显示，零高度逃逸在50m命中半径下命中率为96.20\%；最大动压逃逸在1000m命中半径下命中率为95.20\%。正交试验的敏感性分析揭示出两种工况的差异：零高度逃逸主要受风扰影响，而最大动压工况对气动与大气模型偏差更为敏感。
+    采用$L_{27}(3^8)$正交试验和500组拉丁超立方抽样进行打靶分析。零高度逃逸在50m命中半径下命中率96.20\%，主要受风扰影响；最大动压逃逸在1000m命中半径下命中率95.20\%，对气动与大气模型偏差最敏感。
 
-    基于蒙特卡洛统计结果，建立了分级风险评估体系。评估表明，两种工况的命中风险与姿态风险均处于低水平，超限概率低于4\%，角速度波动不超过0.003rad/s。值得注意的是，最大动压逃逸存在一定尾部风险，最极端情况下脱靶量可达1414.684m。
+    基于打靶统计结果建立了三级风险评估体系，综合命中精度、姿态稳定性和结构安全三项维度。评估表明，两种工况的命中风险和姿态风险均为低风险，超限概率均低于5\%，控制裕度与结构安全裕度充足。最大动压工况峰值动压已接近结构承载边界，尾部风险值得关注，最极端脱靶量可达1414.684m。
 
-    \keywordslist{载人登月；发射逃逸系统；六自由度动力学；蒙特卡洛仿真；风险评估}
+    \keywordslist{载人登月；逃逸系统；六自由度动力学；蒙特卡洛仿真；风险评估}
 \end{abstract}
 
 \begin{engabstract}
-    The launch escape system is directly related to the safety of astronauts in manned space flight. Aiming at the needs of future manned lunar missions, this paper selects the Orion spacecraft as a reference object, and conducts six-degree-of-freedom dynamic modeling, Monte Carlo simulation analysis and risk assessment research around the launch escape phase. 
- 
-    The six-degree-of-freedom simulation model includes coordinate system transformation, ISA standard atmosphere model, aerodynamic model segmented by Mach number, AM / ACM / JM multi-engine joint propulsion system and programmed angle PD attitude control law. The complete translational and rotational differential equations are derived. In order to simulate the real flight conditions, the model also includes six kinds of interference factors, such as wind disturbance, engine installation deviation, thrust and mass deviation, initial state deviation, aerodynamic and atmospheric model deviation, a total of eight independent experimental variables. 
- 
-    For zero height escape and maximum dynamic pressure escape, $L_{27}(3^8)$ orthogonal test and 500 groups of Latin hypercube sampling were used for shooting analysis. The results show that the hit rate of zero height escape at 50 m hit radius is 96.20\%. The hit rate of the maximum dynamic pressure escape under the 1000 m hit radius is 95.20\%. The sensitivity analysis of the orthogonal test reveals the difference between the two conditions : the zero-altitude escape is mainly affected by wind disturbance, while the maximum dynamic pressure condition is more sensitive to the deviation of aerodynamic and atmospheric models. 
- 
-    Based on the Monte Carlo statistical results, a hierarchical risk assessment system was established. The evaluation shows that the hit risk and attitude risk of the two working conditions are at a low level, the over-limit probability is less than 4\%, and the angular velocity fluctuation does not exceed 0.003 rad / s. It is worth noting that there is a certain tail risk in the maximum dynamic pressure escape, and the miss distance can reach 1414.684 m in the most extreme cases.
+    The launch escape system is directly related to astronaut safety. Aiming at manned lunar mission requirements, this paper takes the Orion spacecraft as a reference and conducts six-degree-of-freedom dynamic modeling, Monte Carlo simulation and risk assessment for the launch escape phase.
 
-    \engkeywordslist{Crewed lunar landing; Launch abort system; 6-DOF dynamics; Monte Carlo simulation; Risk assessment}
+    A six-degree-of-freedom simulation model was established, including coordinate transformation, International Standard Atmosphere (ISA) model, Mach-number-segmented aerodynamic model, Abort Motor (AM) / Attitude Control Motor (ACM) / Jettison Motor (JM) multi-engine propulsion system and Proportional-Differential (PD) attitude control law. Six categories of disturbance factors including wind, thrust deviation, mass deviation and aerodynamic deviation were incorporated, enabling numerical simulation of both zero-altitude escape and maximum dynamic pressure escape conditions.
+
+    $L_{27}(3^8)$ orthogonal tests and 500 Latin hypercube sampling runs were conducted for shooting analysis. The zero-altitude escape achieved a hit rate of 96.20\% within a 50 m radius, most sensitive to wind disturbance; the maximum dynamic pressure escape achieved 95.20\% within a 1000 m radius, most sensitive to aerodynamic and atmospheric model deviations.
+
+    A three-level risk assessment system was established covering hit accuracy, attitude stability and structural safety. Both conditions show low hit risk and low attitude risk, with exceedance probabilities below 5\% and sufficient control and structural safety margins. The peak dynamic pressure in the maximum dynamic pressure condition is close to the structural load limit, and the tail risk deserves attention, with miss distance up to 1414.684 m in extreme cases.
+
+    \engkeywordslist{Crewed lunar landing; Launch abort system; six-degree-of-freedom (6-DOF) dynamics; Monte Carlo simulation; Risk assessment}
 \end{engabstract}
