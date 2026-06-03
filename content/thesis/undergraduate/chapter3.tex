@@ -131,7 +131,7 @@ L_{2\leftarrow 1}=L_{1\leftarrow 2}^T
 \mathbf I=\mathrm{diag}(I_x,I_y,I_z) 
 \end{equation}
 
-默认取值 $I_x=3.0\times10^4\ \mathrm{kg\cdot m^2}$，$I_y=3.2\times10^5\ \mathrm{kg\cdot m^2}$，$I_z=3.2\times10^5\ \mathrm{kg\cdot m^2}$。上述惯量值依据猎户座飞船的公开质量与几何尺寸进行工程反算得到。
+默认取值 $I_x=3.0\times10^4\ \mathrm{kg\cdot m^2}$，$I_y=3.2\times10^5\ \mathrm{kg\cdot m^2}$，$I_z=3.2\times10^5\ \mathrm{kg\cdot m^2}$。上述惯量值依据猎户座飞船的公开质量与几何尺寸进行工程反算得到~\cite{mcgowan2011overview}。
 
 \section{地球环境与气动模型}
 
@@ -228,6 +228,8 @@ C_y^{\alpha}(M)=
 C_z^{\beta}(M)=-C_y^{\alpha}(M)
 \end{equation}
 
+上述气动系数取自猎户座逃逸飞行器公开气动数据~\cite{chan2011modeling}。
+
 则法向力系数和侧向力系数分别为：
 \begin{equation}
 C_Y=C_y^{\alpha}(M)\alpha_{eff},\quad
@@ -260,7 +262,7 @@ m_y &= m_{y\beta}\beta_{eff}+m_{y\omega}\frac{\omega_{y1}L}{2V}
 \end{aligned}
 \end{equation}
 
-滚转力矩系数暂取零。力矩系数工程初值取 $m_{z0}=0$，$m_{z\alpha}=-0.08$，$m_{z\omega}=-1.20$，$m_{y\beta}=-0.08$，$m_{y\omega}=-1.20$。
+滚转力矩系数暂取零。力矩系数工程初值取 $m_{z0}=0$，$m_{z\alpha}=-0.08$，$m_{z\omega}=-1.20$，$m_{y\beta}=-0.08$，$m_{y\omega}=-1.20$~\cite{chan2011modeling}。
 
 \section{推进与控制模型}
 
@@ -293,7 +295,7 @@ JM 推进剂质量 $m_{0,JM}$ & $408.2\ \mathrm{kg}$ \\
 \end{tabularx}
 \end{table}
 
-三种发动机的比冲分别为 $I_{sp,AM}=250\ \mathrm s$，$I_{sp,ACM}=230\ \mathrm s$，$I_{sp,JM}=220\ \mathrm s$。
+三种发动机的比冲分别为 $I_{sp,AM}=250\ \mathrm s$，$I_{sp,ACM}=230\ \mathrm s$，$I_{sp,JM}=220\ \mathrm s$~\cite{mcgowan2011overview,McCauley2015}。
 
 \subsection{推力时序}
 
@@ -326,6 +328,8 @@ Max-Q Abort & JM & 27.0 & 0.10 & 1.70 & 0.10 \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+以上推力时序参数参考了猎户座逃逸系统的公开设计数据~\cite{mcgowan2011overview,Litton2008}。
 
 引入发动机状态开关 $\sigma_k(t)\in\{0,1\}$ 后，实际推力标量为：
 \begin{equation}
@@ -372,7 +376,7 @@ P_{Cy}^{cmd}=-\frac{M_{Cz}^{cmd}}{l_{ACM}},\quad
 P_{Cz}^{cmd}=\frac{M_{Cy}^{cmd}}{l_{ACM}} 
 \end{equation}
 
- 其中 $l_{ACM}=6.0\ \mathrm m$ 为 ACM 喷管力臂。实际控制力矩为：
+ 其中 $l_{ACM}=6.0\ \mathrm m$ 为 ACM 喷管力臂~\cite{mcgowan2011overview}。实际控制力矩为：
 \begin{equation}
 M_{Cy}=-l_{ACM}P_{Cz},\quad
 M_{Cz}=l_{ACM}P_{Cy} 
@@ -478,6 +482,8 @@ w_1=w\cos\chi_w,\quad w_2=w\sin\chi_w
 \end{equation}
 
 其中 $\Delta m_y=m_{y\beta}\Delta\beta$，$\Delta m_z=m_{z\alpha}\Delta\alpha$。
+
+上述风扰建模方法参考了低空风切变对飞行器弹道影响的分析思路~\cite{陈健伟2018两种典型低空风切变对火箭弹弹道特性的影响}。
 
 \subsection{发动机安装偏差}
 
